@@ -9,36 +9,40 @@
 const sound = "https://upload.wikimedia.org/wikipedia/commons/4/49/En-au-yell_at.ogg"
 const player = new Tone.Player(sound)
 player.toDestination()
-
-const lfo = new Tone.LFO({
-  frequency: 2, // modulation rate in Hz
-  min: -100,     // minimum deviation (below 440 Hz)
-  max: 100       // maximum deviation (above 440 Hz)
-})
+player.loop = true
   
 function changeRate (e) {
   const rate = Number(e.target.value)
-  lfo.set({ frequency: rate })
-  rateLabel.content(`rate: ${rate.toFixed(2)}`)
+  player.playbackRate = rate
 }
 
+function togglePlayer(e) {
+  if (e.target.checked){
+     player.start()
+  }
+  else {
+    player.stop()
+  }
+}  
+  
 // UI (to trigger play function)
 nn.create('input')
   .set({
     type: 'range',
-    min: 220, // minimum value for this slider
-    max: 880, // maximum value for this range
-    value: 440, // default value
-    step: 0.1 // smallest change we can make when we slide it
+    min: -1, // minimum value for this slider
+    max: 3, // maximum value for this range
+    value: 1, // default value
+    step: 0.01 // smallest change we can make when we slide it
   })
   .addTo('body')
   .on('input', changeRate)
   
 
-nn.create('button')
+nn.create('input')
+  .set({ type: 'checkbox' })
   .content('play sound')
   .addTo('body')
-  .on('mousedown', () => player.start())
+  .on('change', togglePlayer)
 
 
 // visualizations
