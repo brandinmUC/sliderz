@@ -10,11 +10,36 @@ const sound = "https://upload.wikimedia.org/wikipedia/commons/4/49/En-au-yell_at
 const player = new Tone.Player(sound)
 player.toDestination()
 
+const lfo = new Tone.LFO({
+  frequency: 2, // modulation rate in Hz
+  min: -100,     // minimum deviation (below 440 Hz)
+  max: 100       // maximum deviation (above 440 Hz)
+})
+  
+function changeRate (e) {
+  const rate = Number(e.target.value)
+  lfo.set({ frequency: rate })
+  rateLabel.content(`rate: ${rate.toFixed(2)}`)
+}
+
 // UI (to trigger play function)
+nn.create('input')
+  .set({
+    type: 'range',
+    min: 220, // minimum value for this slider
+    max: 880, // maximum value for this range
+    value: 440, // default value
+    step: 0.1 // smallest change we can make when we slide it
+  })
+  .addTo('body')
+  .on('input', changeRate)
+  
+
 nn.create('button')
   .content('play sound')
   .addTo('body')
   .on('click', () => player.start())
+
 
 // visualizations
 const spec = createSpectrum({ range: [0, 8000] })
