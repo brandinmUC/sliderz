@@ -1,6 +1,6 @@
 <style>
   input{
-    width: 500px
+    width: 650px
   }
 </style>
 <body></body>
@@ -20,25 +20,37 @@ player.connect(effect)
 player.loop = true
 effect.toDestination()
   
-function changeRate (e) {
+function changeRate (e = 1){
   const rate = Number(e.target.value)
+  console.log(rate)
   player.playbackRate = rate
 }
 
-function changeFreq(e) {
-  const freq = Number(e.target.value)
-  effect.set({bits: freq})
-  console.log(effect.frequency.value)
+function changeAttribute(e = 1){
+  const val = Number(e.target.value)
+  console.log(val)
+  effect.set({bits: val})
 }
   
-function togglePlayer(e) {
+function togglePlayer(e){
   if (e.target.checked){
      player.start()
   }
-  else {
+  else{
     player.stop()
   }
 }  
+
+ 
+function resetSettings(e){
+  const rate = document.getElementById("rate");
+  const attribute = document.getElementById("attribute");
+  rate.value = 1; // Set to default value
+  changeRate();
+  attribute.value = 1;
+  changeAttribute(); 
+}
+  
   
 // UI (to trigger play function)
 nn.create('input') //rate
@@ -47,7 +59,8 @@ nn.create('input') //rate
     min: 0, // minimum value for this slider
     max: 3, // maximum value for this range
     value: 1, // default value
-    step: 0.01 // smallest change we can make when we slide it
+    step: 0.01, // smallest change we can make when we slide it
+    id: "rate"
   })
   .addTo('body')
   .on('input', changeRate)
@@ -58,16 +71,22 @@ nn.create('input') //Tremolo
     min: 1, // minimum value for this slider
     max: 16, // maximum value for this range
     value: 1, // default value
-    step: 1 // smallest change we can make when we slide it
+    step: 1, // smallest change we can make when we slide it
+    id: "attribute"
   })
   .addTo('body')
-  .on('input', changeFreq)
+  .on('input', changeAttribute)
   
 nn.create('input')
   .set({ type: 'checkbox' })
   .content('play sound')
   .addTo('body')
   .on('change', togglePlayer)
+  
+nn.create('button')     // what we want to make
+  .content('Reset') // what we want it to say
+  .addTo('body')       // where we want to put it
+  .on('click', resetSettings)
 
 
 // visualizations
