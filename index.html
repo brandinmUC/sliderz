@@ -1,3 +1,8 @@
+<style>
+  input{
+    width: 500px
+  }
+</style>
 <body></body>
 <script src="https://unpkg.com/tone"></script>
 <script src="https://cdn.jsdelivr.net/gh/netizenorg/netnet-standard-library/build/nn.min.js?v=1"></script>
@@ -6,16 +11,26 @@
 <script src="https://algorithmicmusic.online/js/create-waveform.js"></script>
 <script>
 /* global Tone, nn, d3, createWaveform, createSpectrum */
-const sound = "https://upload.wikimedia.org/wikipedia/commons/4/49/En-au-yell_at.ogg"
+  
+// const effect = new Tone.Tremolo().start()  
+const effect = new Tone.BitCrusher()
+const sound = "https://upload.wikimedia.org/wikipedia/commons/d/dc/Scream-c.wav"
 const player = new Tone.Player(sound)
-player.toDestination()
+player.connect(effect)
 player.loop = true
+effect.toDestination()
   
 function changeRate (e) {
   const rate = Number(e.target.value)
   player.playbackRate = rate
 }
 
+function changeFreq(e) {
+  const freq = Number(e.target.value)
+  effect.set({bits: freq})
+  console.log(effect.frequency.value)
+}
+  
 function togglePlayer(e) {
   if (e.target.checked){
      player.start()
@@ -26,10 +41,10 @@ function togglePlayer(e) {
 }  
   
 // UI (to trigger play function)
-nn.create('input')
+nn.create('input') //rate
   .set({
     type: 'range',
-    min: -1, // minimum value for this slider
+    min: 0, // minimum value for this slider
     max: 3, // maximum value for this range
     value: 1, // default value
     step: 0.01 // smallest change we can make when we slide it
@@ -37,7 +52,17 @@ nn.create('input')
   .addTo('body')
   .on('input', changeRate)
   
-
+nn.create('input') //Tremolo
+  .set({
+    type: 'range',
+    min: 1, // minimum value for this slider
+    max: 16, // maximum value for this range
+    value: 1, // default value
+    step: 1 // smallest change we can make when we slide it
+  })
+  .addTo('body')
+  .on('input', changeFreq)
+  
 nn.create('input')
   .set({ type: 'checkbox' })
   .content('play sound')
@@ -47,6 +72,6 @@ nn.create('input')
 
 // visualizations
 const spec = createSpectrum({ range: [0, 8000] })
-player.connect(spec)
+effect.connect(spec)
 
 </script>
