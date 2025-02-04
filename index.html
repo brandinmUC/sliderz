@@ -20,17 +20,18 @@ player.connect(effect)
 player.loop = true
 effect.toDestination()
   
-function changeRate (e = 1){
+function changeRate (e){
   const rate = Number(e.target.value)
   console.log(rate)
   player.playbackRate = rate
 }
 
-function changeAttribute(e = 1){
-  const val = Number(e.target.value)
-  console.log(val)
-  effect.set({bits: val})
-}
+
+// function changeAttribute(e){
+//   const val = Number(e.target.value)
+//   console.log(val)
+//   effect.set({bits: val})
+// }
   
 function togglePlayer(e){
   if (e.target.checked){
@@ -46,7 +47,7 @@ function resetSettings(e){
   const rate = document.getElementById("rate");
   const attribute = document.getElementById("attribute");
   rate.value = 1; // Set to default value
-  changeRate();
+  player.playbackRate = 1;
   attribute.value = 1;
   changeAttribute(); 
 }
@@ -65,17 +66,17 @@ nn.create('input') //rate
   .addTo('body')
   .on('input', changeRate)
   
-nn.create('input') //Tremolo
-  .set({
-    type: 'range',
-    min: 1, // minimum value for this slider
-    max: 16, // maximum value for this range
-    value: 1, // default value
-    step: 1, // smallest change we can make when we slide it
-    id: "attribute"
-  })
-  .addTo('body')
-  .on('input', changeAttribute)
+// nn.create('input') //Tremolo
+//   .set({
+//     type: 'range',
+//     min: 1, // minimum value for this slider
+//     max: 16, // maximum value for this range
+//     value: 1, // default value
+//     step: 1, // smallest change we can make when we slide it
+//     id: "attribute"
+//   })
+//   .addTo('body')
+//   .on('input', changeAttribute)
   
 nn.create('input')
   .set({ type: 'checkbox' })
