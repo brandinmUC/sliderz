@@ -10,35 +10,53 @@
 <script src="https://algorithmicmusic.online/js/create-spectrum.js"></script>
 <script src="https://algorithmicmusic.online/js/create-waveform.js"></script>
 <script>
+  
+  
 /* global Tone, nn, d3, createWaveform, createSpectrum */
   
 // const effect = new Tone.Tremolo().start()  
 const effect = new Tone.BitCrusher()
 const sound = "https://upload.wikimedia.org/wikipedia/commons/d/dc/Scream-c.wav"
 const player = new Tone.Player(sound)
+
+  
 player.connect(effect)
 player.loop = true
 effect.toDestination()
+ 
   
-function changeRate (e){
+function changeRate(e){
   const rate = Number(e.target.value)
-  console.log(rate)
+  console.log("RATE:", rate)
   player.playbackRate = rate
 }
 
 
-// function changeAttribute(e){
-//   const val = Number(e.target.value)
-//   console.log(val)
-//   effect.set({bits: val})
-// }
+function changeVolume(e){
+  const vol = Number(e.target.value);
+  console.log("VOL: " + vol);
+  player.volume.value = vol;
+}
   
+
+function changeAttribute(e){
+  if (val){
+     console.log(val)
+      effect.set({bits: val})
+  } else{
+  const val = Number(e.target.value)
+  console.log(val)
+  effect.set({bits: val})
+  }
+}
+  
+    
 function togglePlayer(e){
   if (e.target.checked){
-     player.start()
+     player.start();
   }
   else{
-    player.stop()
+    player.stop();
   }
 }  
 
@@ -46,14 +64,16 @@ function togglePlayer(e){
 function resetSettings(e){
   const rate = document.getElementById("rate");
   const attribute = document.getElementById("attribute");
-  rate.value = 1; // Set to default value
-  player.playbackRate = 1;
-  attribute.value = 1;
-  changeAttribute(); 
+  const volume = document.getElementById("volume");
+  rate.value = player.playbackRate = 1;
+  volume.value = player.volume.value = 0;
+  attribute.value = 1; //idk about this yet
+  changeAttribute(1);  //idk about this yet
 }
   
   
 // UI (to trigger play function)
+// Sliders
 nn.create('input') //rate
   .set({
     type: 'range',
@@ -64,34 +84,56 @@ nn.create('input') //rate
     id: "rate"
   })
   .addTo('body')
-  .on('input', changeRate)
+  .on('input', changeRate);
   
-// nn.create('input') //Tremolo
-//   .set({
-//     type: 'range',
-//     min: 1, // minimum value for this slider
-//     max: 16, // maximum value for this range
-//     value: 1, // default value
-//     step: 1, // smallest change we can make when we slide it
-//     id: "attribute"
-//   })
-//   .addTo('body')
-//   .on('input', changeAttribute)
   
+nn.create('input') //volume
+  .set({
+    type: 'range',
+    min: -22, // minimum value for this slider
+    max: 22, // maximum value for this range
+    value: 0, // default value
+    step: 1, // smallest change we can make when we slide it
+    id: "volume"
+  })
+  .addTo('body')
+  .on('input', changeVolume);
+  
+  
+nn.create('input') //Tremolo
+  .set({
+    type: 'range',
+    min: 1, // minimum value for this slider
+    max: 16, // maximum value for this range
+    value: 1, // default value
+    step: 1, // smallest change we can make when we slide it
+    id: "attribute"
+  })
+  .addTo('body')
+  .on('input', changeAttribute)
+  
+  
+// Inputs
 nn.create('input')
-  .set({ type: 'checkbox' })
+  .set({
+    type: 'checkbox',
+    id: "start/stop"
+  })
   .content('play sound')
   .addTo('body')
-  .on('change', togglePlayer)
+  .on('change', togglePlayer);
   
-nn.create('button')     // what we want to make
-  .content('Reset') // what we want it to say
-  .addTo('body')       // where we want to put it
-  .on('click', resetSettings)
+  
+  
+nn.create('button')    // what we want to make
+  .content('Reset')    // what we want it to say
+  .addTo('body')      // where we want to put it
+  .on('click', resetSettings);
 
 
 // visualizations
 const spec = createSpectrum({ range: [0, 8000] })
 effect.connect(spec)
 
+  
 </script>
