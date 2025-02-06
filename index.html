@@ -17,6 +17,8 @@
 // const effect = new Tone.Tremolo().start()  
 const effect = new Tone.BitCrusher()
 const sound = "https://upload.wikimedia.org/wikipedia/commons/d/dc/Scream-c.wav"
+// const sound = "https://www.myinstants.com/media/sounds/tuco-get-out.mp3"
+
 const player = new Tone.Player(sound)
 
   
@@ -27,27 +29,29 @@ effect.toDestination()
   
 function changeRate(e){
   const rate = Number(e.target.value)
-  console.log("RATE:", rate)
-  player.playbackRate = rate
+  console.log("RATE:", rate);
+  rlabel.content("Rate: " + rate);
+  player.playbackRate = rate;
 }
 
 
 function changeVolume(e){
   const vol = Number(e.target.value);
   console.log("VOL: " + vol);
+  vlabel.content("Volume: " + (vol + 22));
   player.volume.value = vol;
 }
   
 
 function changeAttribute(e){
-  if (val){
-     console.log(val)
-      effect.set({bits: val})
-  } else{
+  // if (val){
+  //    console.log(val)
+  //     effect.set({bits: val})
+  // } else{
   const val = Number(e.target.value)
-  console.log(val)
+  console.log("BITS", val)
+  alabel.content("Bits: " + val);
   effect.set({bits: val})
-  }
 }
   
     
@@ -67,14 +71,18 @@ function resetSettings(e){
   const volume = document.getElementById("volume");
   rate.value = player.playbackRate = 1;
   volume.value = player.volume.value = 0;
-  attribute.value = 1; //idk about this yet
-  changeAttribute(1);  //idk about this yet
+  // if bits
+  attribute.value = 16; //idk about this yet
+  effect.set({bits: 16});  //idk about this yet
+  rlabel.content("Rate: " + 1)
+  vlabel.content("Volume: " + 22)
+  alabel.content("Bits: " + 16)
 }
   
   
 // UI (to trigger play function)
 // Sliders
-nn.create('input') //rate
+nn.create('input') //Rate
   .set({
     type: 'range',
     min: 0, // minimum value for this slider
@@ -87,7 +95,12 @@ nn.create('input') //rate
   .on('input', changeRate);
   
   
-nn.create('input') //volume
+const rlabel = nn.create('label')
+  .content('Rate: 1')
+  .addTo('body');
+  
+  
+nn.create('input') //Volume
   .set({
     type: 'range',
     min: -22, // minimum value for this slider
@@ -100,18 +113,26 @@ nn.create('input') //volume
   .on('input', changeVolume);
   
   
-nn.create('input') //Tremolo
+const vlabel = nn.create('label')
+  .content('Volume: 22')
+  .addTo('body');
+  
+  
+nn.create('input') //Bits
   .set({
     type: 'range',
     min: 1, // minimum value for this slider
     max: 16, // maximum value for this range
-    value: 1, // default value
+    value: 16, // default value
     step: 1, // smallest change we can make when we slide it
     id: "attribute"
   })
   .addTo('body')
   .on('input', changeAttribute)
   
+const alabel = nn.create('label')
+  .content('Bits: 16')
+  .addTo('body');  
   
 // Inputs
 nn.create('input')
@@ -122,7 +143,6 @@ nn.create('input')
   .content('play sound')
   .addTo('body')
   .on('change', togglePlayer);
-  
   
   
 nn.create('button')    // what we want to make
