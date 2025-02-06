@@ -15,7 +15,8 @@
 /* global Tone, nn, d3, createWaveform, createSpectrum */
   
 // const effect = new Tone.Tremolo().start()  
-const effect = new Tone.BitCrusher()
+const effect1 = new Tone.BitCrusher()
+const effect2 = new Tone.Chorus().start()
 const sound = "https://upload.wikimedia.org/wikipedia/commons/d/dc/Scream-c.wav"
 // const sound = "https://www.myinstants.com/media/sounds/tuco-get-out.mp3"
 
@@ -23,8 +24,10 @@ const player = new Tone.Player(sound)
 
   
 player.connect(effect)
+player.connect(effect2)
 player.loop = true
-effect.toDestination()
+effect1.toDestination()
+effect2.toDestination()
  
   
 function changeRate(e){
@@ -43,14 +46,10 @@ function changeVolume(e){
 }
   
 
-function changeAttribute(e){
-  // if (val){
-  //    console.log(val)
-  //     effect.set({bits: val})
-  // } else{
+function changeBits(e){
   const val = Number(e.target.value)
   console.log("BITS", val)
-  alabel.content("Bits: " + val);
+  blabel.content("Bits: " + val);
   effect.set({bits: val})
 }
   
@@ -76,9 +75,23 @@ function resetSettings(e){
   effect.set({bits: 16});  //idk about this yet
   rlabel.content("Rate: " + 1)
   vlabel.content("Volume: " + 22)
-  alabel.content("Bits: " + 16)
+  blabel.content("Bits: " + 16)
 }
+
   
+function changeChorus (e){
+  const val = Number(e.target.value)
+  effect.set({
+    frequency: 4, 
+    delayTime: 16, 
+    // type: 'triangle', 
+    depth: 1, 
+    feedback: 0.1, 
+    spread: 120,
+    wet: e.target.value})
+  clabel.content("Chorus (wet): " + val);
+}
+
   
 // UI (to trigger play function)
 // Sliders
@@ -128,12 +141,32 @@ nn.create('input') //Bits
     id: "attribute"
   })
   .addTo('body')
-  .on('input', changeAttribute)
+  .on('input', changeBits)
+
   
-const alabel = nn.create('label')
+const blabel = nn.create('label')
   .content('Bits: 16')
-  .addTo('body');  
+  .addTo('body'); 
+
+nn.create('input') //Bits
+  .set({
+    type: 'range',
+    min: 0, // minimum value for this slider
+    max: 1, // maximum value for this range
+    value: 0.5, // default value
+    step: 0.1, // smallest change we can make when we slide it
+    id: "attribute"
+  })
+  .addTo('body')
+  .on('input', changeChorus)
   
+ 
+const clabel = nn.create('label')
+  .content('Chorus: 0.5')
+  .addTo('body'); 
+  
+  
+
 // Inputs
 nn.create('input')
   .set({
@@ -153,7 +186,9 @@ nn.create('button')    // what we want to make
 
 // visualizations
 const spec = createSpectrum({ range: [0, 8000] })
-effect.connect(spec)
+const spec2 = createSpectrum({ range: [0, 8000] })
+effect1.connect(spec)
+effect2.connect(spec2)
 
   
 </script>
