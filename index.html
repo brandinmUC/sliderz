@@ -11,6 +11,8 @@
 <script src="https://algorithmicmusic.online/js/create-waveform.js"></script>
 <script>
 
+// document.body.style.background = "black"
+// document.body.s
  //screaming "https://upload.wikimedia.org/wikipedia/commons/d/dc/Scream-c.wav" 
 //Default Sounds (add file drop later) 
 const sound1 = 
@@ -179,6 +181,7 @@ const blabel = nn.create('label')
   .content('Bits: 16')
   .addTo('body'); 
 
+  
 nn.create('input') //Bits
   .set({
     type: 'range',
@@ -197,6 +200,52 @@ const clabel = nn.create('label')
   .addTo('body'); 
   
   
+
+
+  
+// file selection
+function loadFileToBuffer (file, channel) {
+  // we'll use the FileReader API...
+  const reader = new window.FileReader()
+
+  // we'll setup the "onload" event listener,
+  // to decode the audio data from the file's data
+  // and apply it to the player's buffer
+  reader.onload = async (e) => {
+    const fileData = e.target.result
+    const buffer = await Tone.context.decodeAudioData(fileData)
+    if (channel === 1){
+    player1.buffer = buffer
+    clabel2.content('Channel 1: ' + file.name)
+    } else {
+      player2.buffer = buffer
+      clabel3.content('Channel 2: ' + file.name)
+    }
+  }
+
+  // we'll read the file and trigger the "onload" listener above
+  reader.readAsArrayBuffer(file)
+}
+
+  
+// visualizations
+//CHANNEL 1
+const spec1 = createSpectrum({ range: [0, 8000], color: "red" })
+const clabel2 = nn.create('label')
+  .content('Channel 1: ' + sound1)
+  .addTo('body'); 
+  
+  
+// Read file input - from example
+nn.create('input')
+  .set({ type: 'file', accept: 'audio/*' })
+  .addTo('body')
+  .on('change', () => {
+    const file = event.target.files[0]
+    if (file) loadFileToBuffer(file, 1)
+  })
+  
+
 // Inputs
 nn.create('input')
   .set({
@@ -206,14 +255,29 @@ nn.create('input')
   .content('play sound')
   .addTo('body')
   .on('change', togglePlayer1);
-
   
- const plabel1 = nn.create('label')
-  .content('Toggle First Channel')
+
+nn.create('button')    // what we want to make
+  .content('Reset Channel 1')    // what we want it to say
+  .addTo('body')      // where we want to put it
+  .on('click', resetSettings1);
+ 
+// CHANNEL 2  
+const spec2 = createSpectrum({ range: [0, 8000], color: "green" })
+const clabel3 = nn.create('label')
+  .content('Channel 2: ' + sound2)
   .addTo('body'); 
   
+nn.create('input')
+  .set({ type: 'file', accept: 'audio/*' })
+  .addTo('body')
+  .on('change', () => {
+    const file = event.target.files[0]
+    if (file) loadFileToBuffer(file, 2)
+  })
+  
 
- nn.create('input')
+nn.create('input')
   .set({
     type: 'checkbox',
     id: "start/stop2"
@@ -221,43 +285,14 @@ nn.create('input')
   .content('play sound')
   .addTo('body')
   .on('change', togglePlayer2); 
- 
   
- const plabel2 = nn.create('label')
-  .content('Toggle Second Channel')
-  .addTo('body'); 
-  
-  
-nn.create('button')    // what we want to make
-  .content('Reset Channel 1')    // what we want it to say
-  .addTo('body')      // where we want to put it
-  .on('click', resetSettings1);
 
-  
 nn.create('button')    // what we want to make
   .content('Reset Channel 2')    // what we want it to say
   .addTo('body')      // where we want to put it
-  .on('click', resetSettings2);
-
-  
-// visualizations
-const spec1 = createSpectrum({ range: [0, 8000], color: "red" })
-const clabel2 = nn.create('label')
-  .content('Channel 1: ' + sound1)
-  .addTo('body'); 
-  
-const spec2 = createSpectrum({ range: [0, 8000], color: "green" })
-const clabel3 = nn.create('label')
-  .content('Channel 2: ' + sound2)
-  .addTo('body'); 
+  .on('click', resetSettings2);  
 effect1.connect(spec1)
 effect2.connect(spec2)
 
-const wave = createWaveform({
-  width: '700px',
-  height: '200px',
-  background: 'white',
-  color: 'green',
-})
-  
+
 </script>
