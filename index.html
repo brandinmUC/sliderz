@@ -25,54 +25,98 @@ const player1 = new Tone.Player(sound1)
 const player2 = new Tone.Player(sound2)
 
   
-// Initalize the two effects
-const effect1 = new Tone.BitCrusher()
-const effect2 = new Tone.Chorus().start()
+// Initalize the two effects - player/effect
+const effect11 = new Tone.BitCrusher()
+const effect12 = new Tone.Chorus().start()
+const effect21 = new Tone.BitCrusher()
+const effect22 = new Tone.Chorus().start()
 
 // Make cinnections
-player1.connect(effect1)
-player2.connect(effect2)
+player1.connect(effect11)
+player1.connect(effect12)
+player2.connect(effect21)
+player2.connect(effect22)
 player1.loop = true
 player2.loop = true
-effect1.toDestination()
-effect2.toDestination()
+effect11.toDestination()
+effect12.toDestination()
+effect21.toDestination()
+effect22.toDestination()
  
   
-function changeRate(e){
+function changeRate1(e){
   const rate = Number(e.target.value)
-  console.log("RATE:", rate);
-  rlabel.content("Rate: " + rate);
-  player1.playbackRate = player2.playbackRate = rate;
+  console.log("RATE:1", rate);
+  rlabel1.content("Rate: " + rate);
+  player1.playbackRate = rate;
 }
 
 
-function changeVolume(e){
+function changeVolume1(e){
   const vol = Number(e.target.value);
-  console.log("VOL: " + vol);
-  vlabel.content("Volume: " + (vol + 22));
-  player1.volume.value = player2.volume.value = vol;
+  console.log("VOL1: " + vol);
+  vlabel1.content("Volume: " + (vol + 22));
+  player1.volume.value = vol;
 }
   
 
-function changeBits(e){
+function changeBits1(e){
   const val = Number(e.target.value)
-  console.log("BITS", val)
-  blabel.content("Bits: " + val);
-  effect1.set({bits: val})
+  console.log("BITS1", val)
+  blabel1.content("Bits: " + val);
+  effect11.set({bits: val})
 }
   
 
-function changeChorus (e){
+function changeChorus1(e){
   const val = Number(e.target.value)
-  effect2.set({
+  effect12.set({
     frequency: 4, 
     delayTime: 16, 
-    // type: 'triangle', 
+    type: 'triangle', 
     depth: 1, 
     feedback: 0.1, 
     spread: 120,
     wet: e.target.value})
-  clabel.content("Chorus (wet): " + val);
+  chlabel1.content("Chorus (wet): " + val);
+}
+  
+
+function changeRate2(e){
+  const rate = Number(e.target.value)
+  console.log("RATE:", rate);
+  rlabel2.content("Rate: " + rate);
+  player2.playbackRate = rate;
+}
+
+
+function changeVolume2(e){
+  const vol = Number(e.target.value);
+  console.log("VOL2: " + vol);
+  vlabel2.content("Volume: " + (vol + 22));
+  player2.volume.value = vol;
+}
+  
+
+function changeBits2(e){
+  const val = Number(e.target.value)
+  console.log("BITS2", val)
+  blabel2.content("Bits: " + val);
+  effect21.set({bits: val})
+}
+  
+
+function changeChorus2(e){
+  const val = Number(e.target.value)
+  effect22.set({
+    frequency: 4, 
+    delayTime: 16, 
+    type: 'triangle', 
+    depth: 1, 
+    feedback: 0.1, 
+    spread: 120,
+    wet: e.target.value})
+  chlabel2.content("Chorus (wet): " + val);
 }
   
   
@@ -104,10 +148,12 @@ function resetSettings1(e){
   volume.value = player1.volume.value = 0;
   // if bits
   attribute.value = 16; //idk about this yet
-  effect1.set({bits: 16});  //idk about this yet
-  rlabel.content("Rate: " + 1)
-  vlabel.content("Volume: " + 22)
-  blabel.content("Bits: " + 16)
+  effect11.set({bits: 16});  //idk about this yet
+  effect21.set({wet: 0})
+  rlabel1.content("Rate: " + 1)
+  vlabel1.content("Volume: " + 22)
+  blabel1.content("Bits: " + 16)
+  chlabel1.content("Chorus: " + 0)
 }
 
   
@@ -115,14 +161,16 @@ function resetSettings2(e){
   const rate = document.getElementById("rate");
   const attribute = document.getElementById("attribute");
   const volume = document.getElementById("volume");
-  rate.value = player1.playbackRate = player2.playbackRate = 1;
-  volume.value = player1.volume.value = player2.volume.value = 0;
+  rate.value = player2.playbackRate = 1;
+  volume.value = player2.volume.value = 0;
   // if bits
   attribute.value = 16; //idk about this yet
-  effect2.set({wet: 0.5});  //idk about this yet
-  rlabel.content("Rate: " + 1)
-  vlabel.content("Volume: " + 22)
-  blabel.content("Bits: " + 16)
+  effect21.set({bits: 16})
+  effect22.set({wet: 0});  //idk about this yet
+  rlabel2.content("Rate: " + 1)
+  vlabel2.content("Volume: " + 22)
+  blabel2.content("Bits: " + 16)
+  chlabel2.content("Chorus: " + 0)
 }  
  
   
@@ -138,10 +186,10 @@ nn.create('input') //Rate
     id: "rate"
   })
   .addTo('body')
-  .on('input', changeRate);
+  .on('input', changeRate1);
   
   
-const rlabel = nn.create('label')
+const rlabel1 = nn.create('label')
   .content('Rate: 1')
   .addTo('body');
   
@@ -156,10 +204,10 @@ nn.create('input') //Volume
     id: "volume"
   })
   .addTo('body')
-  .on('input', changeVolume);
+  .on('input', changeVolume1);
   
   
-const vlabel = nn.create('label')
+const vlabel1 = nn.create('label')
   .content('Volume: 22')
   .addTo('body');
   
@@ -174,10 +222,10 @@ nn.create('input') //Bits
     id: "attribute"
   })
   .addTo('body')
-  .on('input', changeBits)
+  .on('input', changeBits1)
 
   
-const blabel = nn.create('label')
+const blabel1 = nn.create('label')
   .content('Bits: 16')
   .addTo('body'); 
 
@@ -192,16 +240,13 @@ nn.create('input') //Bits
     id: "attribute"
   })
   .addTo('body')
-  .on('input', changeChorus)
+  .on('input', changeChorus1)
   
  
-const clabel = nn.create('label')
+const chlabel1 = nn.create('label')
   .content('Chorus: 0')
   .addTo('body'); 
   
-  
-
-
   
 // file selection
 function loadFileToBuffer (file, channel) {
@@ -216,10 +261,10 @@ function loadFileToBuffer (file, channel) {
     const buffer = await Tone.context.decodeAudioData(fileData)
     if (channel === 1){
     player1.buffer = buffer
-    clabel2.content('Channel 1: ' + file.name)
+    clabel1.content('Channel 1: ' + file.name)
     } else {
       player2.buffer = buffer
-      clabel3.content('Channel 2: ' + file.name)
+      clabel2.content('Channel 2: ' + file.name)
     }
   }
 
@@ -231,10 +276,18 @@ function loadFileToBuffer (file, channel) {
 // visualizations
 //CHANNEL 1
 const spec1 = createSpectrum({ range: [0, 8000], color: "red" })
-const clabel2 = nn.create('label')
+const clabel1 = nn.create('label')
   .content('Channel 1: ' + sound1)
   .addTo('body'); 
-  
+
+nn.create('input')
+  .set({
+    type: 'checkbox',
+    id: "start/stop1"
+  })
+  .content('play sound')
+  .addTo('body')
+  .on('change', togglePlayer1);  
   
 // Read file input - from example
 nn.create('input')
@@ -247,36 +300,90 @@ nn.create('input')
   
 
 // Inputs
-nn.create('input')
-  .set({
-    type: 'checkbox',
-    id: "start/stop1"
-  })
-  .content('play sound')
-  .addTo('body')
-  .on('change', togglePlayer1);
-  
-
 nn.create('button')    // what we want to make
   .content('Reset Channel 1')    // what we want it to say
   .addTo('body')      // where we want to put it
   .on('click', resetSettings1);
  
-// CHANNEL 2  
+// CHANNEL 2 
+// SLIDERS
+nn.create('input') //Rate
+  .set({
+    type: 'range',
+    min: 0, // minimum value for this slider
+    max: 3, // maximum value for this range
+    value: 1, // default value
+    step: 0.01, // smallest change we can make when we slide it
+    id: "rate"
+  })
+  .addTo('body')
+  .on('input', changeRate2);
+  
+  
+const rlabel2 = nn.create('label')
+  .content('Rate: 1')
+  .addTo('body');
+  
+  
+nn.create('input') //Volume
+  .set({
+    type: 'range',
+    min: -22, // minimum value for this slider
+    max: 22, // maximum value for this range
+    value: 0, // default value
+    step: 1, // smallest change we can make when we slide it
+    id: "volume"
+  })
+  .addTo('body')
+  .on('input', changeVolume2);
+  
+  
+const vlabel2 = nn.create('label')
+  .content('Volume: 22')
+  .addTo('body');
+  
+  
+nn.create('input') //Bits
+  .set({
+    type: 'range',
+    min: 1, // minimum value for this slider
+    max: 16, // maximum value for this range
+    value: 16, // default value
+    step: 1, // smallest change we can make when we slide it
+    id: "attribute"
+  })
+  .addTo('body')
+  .on('input', changeBits2)
+
+  
+const blabel2 = nn.create('label')
+  .content('Bits: 16')
+  .addTo('body'); 
+
+  
+nn.create('input') 
+  .set({
+    type: 'range',
+    min: 0, // minimum value for this slider
+    max: 1, // maximum value for this range
+    value: 0, // default value
+    step: 0.1, // smallest change we can make when we slide it
+    id: "attribute"
+  })
+  .addTo('body')
+  .on('input', changeChorus2)
+  
+ 
+const chlabel2 = nn.create('label')
+  .content('Chorus: 0')
+  .addTo('body');  
+  
 const spec2 = createSpectrum({ range: [0, 8000], color: "green" })
-const clabel3 = nn.create('label')
+const clabel4 = nn.create('label')
   .content('Channel 2: ' + sound2)
   .addTo('body'); 
-  
-nn.create('input')
-  .set({ type: 'file', accept: 'audio/*' })
-  .addTo('body')
-  .on('change', () => {
-    const file = event.target.files[0]
-    if (file) loadFileToBuffer(file, 2)
-  })
-  
 
+  
 nn.create('input')
   .set({
     type: 'checkbox',
@@ -286,13 +393,26 @@ nn.create('input')
   .addTo('body')
   .on('change', togglePlayer2); 
   
+  
+nn.create('input')
+  .set({ type: 'file', accept: 'audio/*' })
+  .addTo('body')
+  .on('change', () => {
+    const file = event.target.files[0]
+    if (file) loadFileToBuffer(file, 2)
+  })
+   
 
 nn.create('button')    // what we want to make
   .content('Reset Channel 2')    // what we want it to say
   .addTo('body')      // where we want to put it
-  .on('click', resetSettings2);  
-effect1.connect(spec1)
-effect2.connect(spec2)
+  .on('click', resetSettings2); 
+  
+  
+effect11.connect(spec1)
+effect12.connect(spec1)
+effect21.connect(spec2)
+effect22.connect(spec2)
 
 
 </script>
