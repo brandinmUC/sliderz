@@ -11,10 +11,11 @@
 <script src="https://algorithmicmusic.online/js/create-waveform.js"></script>
 <script>
 
-  
+ //screaming "https://upload.wikimedia.org/wikipedia/commons/d/dc/Scream-c.wav" 
 //Default Sounds (add file drop later) 
-const sound1 = "https://upload.wikimedia.org/wikipedia/commons/d/dc/Scream-c.wav"
-const sound2 = "https://upload.wikimedia.org/wikipedia/commons/0/0b/Clap_and_snare_loop_%28Carrai_Pass%29.wav"
+const sound1 = 
+"https://upload.wikimedia.org/wikipedia/commons/5/56/ZappBeats_808.wav"
+const sound2 = "https://upload.wikimedia.org/wikipedia/commons/d/df/Hunting_horn_tone.ogg"
 
 
 //Initalize the two channels
@@ -39,7 +40,7 @@ function changeRate(e){
   const rate = Number(e.target.value)
   console.log("RATE:", rate);
   rlabel.content("Rate: " + rate);
-  player.playbackRate = rate;
+  player1.playbackRate = player2.playbackRate = rate;
 }
 
 
@@ -47,7 +48,7 @@ function changeVolume(e){
   const vol = Number(e.target.value);
   console.log("VOL: " + vol);
   vlabel.content("Volume: " + (vol + 22));
-  player.volume.value = vol;
+  player1.volume.value = player2.volume.value = vol;
 }
   
 
@@ -58,7 +59,21 @@ function changeBits(e){
   effect1.set({bits: val})
 }
   
-    
+
+function changeChorus (e){
+  const val = Number(e.target.value)
+  effect2.set({
+    frequency: 4, 
+    delayTime: 16, 
+    // type: 'triangle', 
+    depth: 1, 
+    feedback: 0.1, 
+    spread: 120,
+    wet: e.target.value})
+  clabel.content("Chorus (wet): " + val);
+}
+  
+  
 function togglePlayer1(e){
   if (e.target.checked){
      player1.start();
@@ -102,26 +117,12 @@ function resetSettings2(e){
   volume.value = player1.volume.value = player2.volume.value = 0;
   // if bits
   attribute.value = 16; //idk about this yet
-  effect1.set({bits: 16});  //idk about this yet
+  effect2.set({wet: 0.5});  //idk about this yet
   rlabel.content("Rate: " + 1)
   vlabel.content("Volume: " + 22)
   blabel.content("Bits: " + 16)
 }  
  
-  
-function changeChorus (e){
-  const val = Number(e.target.value)
-  effect.set({
-    frequency: 4, 
-    delayTime: 16, 
-    // type: 'triangle', 
-    depth: 1, 
-    feedback: 0.1, 
-    spread: 120,
-    wet: e.target.value})
-  clabel.content("Chorus (wet): " + val);
-}
-
   
 // UI (to trigger play function)
 // Sliders
@@ -183,7 +184,7 @@ nn.create('input') //Bits
     type: 'range',
     min: 0, // minimum value for this slider
     max: 1, // maximum value for this range
-    value: 0.5, // default value
+    value: 0, // default value
     step: 0.1, // smallest change we can make when we slide it
     id: "attribute"
   })
@@ -192,7 +193,7 @@ nn.create('input') //Bits
   
  
 const clabel = nn.create('label')
-  .content('Chorus: 0.5')
+  .content('Chorus: 0')
   .addTo('body'); 
   
   
@@ -240,10 +241,23 @@ nn.create('button')    // what we want to make
 
   
 // visualizations
-const spec1 = createSpectrum({ range: [0, 8000] })
-const spec2 = createSpectrum({ range: [0, 8000] })
+const spec1 = createSpectrum({ range: [0, 8000], color: "red" })
+const clabel2 = nn.create('label')
+  .content('Channel 1: ' + sound1)
+  .addTo('body'); 
+  
+const spec2 = createSpectrum({ range: [0, 8000], color: "green" })
+const clabel3 = nn.create('label')
+  .content('Channel 2: ' + sound2)
+  .addTo('body'); 
 effect1.connect(spec1)
 effect2.connect(spec2)
 
+const wave = createWaveform({
+  width: '700px',
+  height: '200px',
+  background: 'white',
+  color: 'green',
+})
   
 </script>
